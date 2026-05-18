@@ -197,7 +197,7 @@ int modo = 0;
 
 	    	pos ++;
 
-	    	ST7735_FillRectangle(90,40,20,20,BLACK);
+	    	ST7735_FillRectangle(10 + pos*20,40,20,20,BLACK);
 
 	    	numeroAtual = 0;
 
@@ -212,7 +212,7 @@ int modo = 0;
 
 	  	  		 if (strcmp(entrada, senhaStr) == 0)
 	  	  		 {
-	  	  			 ST7735_WriteString(10, 40, "Senha Correta", Font_7x10, GREEN,BLACK);
+	  	  			 ST7735_WriteString(10, 40, "Senha Correta", Font_7x10, RED,BLACK);
 	  	  		 modo = 2;
 
 	  	  		 HAL_Delay(1000);
@@ -220,11 +220,16 @@ int modo = 0;
 	  	  		    ST7735_FillScreen(BLACK);
 	  	  			ST7735_WriteString(10,10,"Digite a quantidade de alunos",Font_7x10,GREEN,BLACK);
 	  	  			sprintf(alunosStr, "%d", quantidadeAlunos);
+	  	  			ST7735_FillRectangle(10,40,50,20,BLACK);
+	  	  			ST7735_WriteString(10,40,alunosStr,Font_7x10,YELLOW,BLACK);
+
 	  	  		    HAL_Delay(1000);
 	  	  		    quantidadeAlunos = 0;
 
 	  	  		    modo = 2;
 
+	  	  		while(HAL_GPIO_ReadPin(BOTAO3_GPIO_Port, BOTAO3_Pin)== GPIO_PIN_RESET);
+	  	  		HAL_Delay(50);
 
 	  	  		 }
 
@@ -287,26 +292,87 @@ int modo = 0;
 	  	  			  	      ST7735_WriteString(10,10,"Alunos:",Font_7x10,GREEN,BLACK);
 	  	  			  	      sprintf(alunosStr, "%d", quantidadeAlunos);
 	  	  			  	      ST7735_WriteString(10,40,alunosStr,Font_7x10,YELLOW,BLACK);
-	  	  			  	      HAL_Delay(1000);
+	  	  			  	      HAL_Delay(1500);
 
+	  	  			  	   modo = 3;
+	  	  			  	  alunosPresentes = 0;
+
+	  	  			  while(HAL_GPIO_ReadPin(BOTAO3_GPIO_Port, BOTAO3_Pin)== GPIO_PIN_RESET);
+	  	  			  HAL_Delay(50);
 
 
 	  	  			  	ST7735_FillScreen(BLACK);
 	  	  			  	ST7735_WriteString(10,10,"Digite a quantidade de alunos presentes",Font_7x10,GREEN,BLACK);
-	  	  			  	sprintf(alunosStr, "%d", quantidadeAlunos);
+	  	  			  	sprintf(alunosStr, "%d", alunosPresentes);
+	  	  			  	ST7735_FillRectangle(10,40,50,20,BLACK);
+	  	  			  	ST7735_WriteString(10,40,alunosStr,Font_7x10,YELLOW,BLACK);
 	  	  			  	HAL_Delay(1000);
-
-	  	  			  	modo = 2;
 
 
 	  	  			 }
+
+	  	  			  if (modo == 3 && botao2 == GPIO_PIN_RESET)
+	  	  			  {
+	  	  			      alunosPresentes++;
+
+	  	  			      if (alunosPresentes > quantidadeAlunos)
+	  	  			      {
+	  	  			          alunosPresentes = 0;
+	  	  			      }
+
+	  	  			      sprintf(alunosStr, "%d", alunosPresentes);
+	  	  			      ST7735_FillRectangle(10,40,50,20,BLACK);
+	  	  			      ST7735_WriteString(10,40,alunosStr,Font_7x10,YELLOW, BLACK);
+
+	  	  			      HAL_Delay(200);
+	  	  			  }
+
+
+	  	  			if (modo == 3 && botao4 == GPIO_PIN_RESET)
+	  	  			{
+	  	  			    alunosPresentes--;
+
+	  	  			    if (alunosPresentes < 0)
+	  	  			    {
+	  	  			        alunosPresentes = quantidadeAlunos;
+	  	  			    }
+
+	  	  			    sprintf(alunosStr, "%d", alunosPresentes);
+	  	  			    ST7735_FillRectangle(10,40,50,20,BLACK);
+	  	  			    ST7735_WriteString(10,40,alunosStr,Font_7x10,YELLOW,BLACK);
+
+	  	  			    HAL_Delay(200);
+	  	  			}
+
+	  	  		if (modo == 3 && botao3 == GPIO_PIN_RESET)
+	  	  		{
+	  	  		    ST7735_FillScreen(BLACK);
+
+	  	  		    ST7735_WriteString(10,10,"Presentes:",Font_7x10,GREEN,BLACK);
+	  	  		    sprintf(alunosStr,"%d",alunosPresentes);
+	  	  		    ST7735_WriteString(10,40,alunosStr,Font_7x10,YELLOW, BLACK);
+
+	  	  		    HAL_Delay(2000);
+	  	  		}
+
+
+	  	  		if (botao2 == GPIO_PIN_RESET && botao3 == GPIO_PIN_RESET )
+	  	  		{
+	  	  			ST7735_FillScreen(BLACK);
+	  	  			ST7735_WriteString(10,30,"AULA FINALIZADA",Font_7x10,CYAN,BLACK);
+	  	  			modo = 0;
+	  	  			HAL_Delay(1000);
+
+	  	  		while(HAL_GPIO_ReadPin(BOTAO2_GPIO_Port,BOTAO2_Pin) == GPIO_PIN_RESET ||HAL_GPIO_ReadPin(BOTAO3_GPIO_Port, BOTAO3_Pin) == GPIO_PIN_RESET);
+	  	  		    HAL_Delay(50);
+
+	  	  		}
 
 
 	      estadoAnt1 = botao1;
 	      estadoAnt2 = botao2;
 	      estadoAnt3 = botao3;
 	      estadoAnt4 = botao4;
-
 
 	  }
   }
